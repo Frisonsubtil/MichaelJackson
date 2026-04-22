@@ -8,14 +8,7 @@ const PUBLIC_DIR = path.join(__dirname, "public");
 const DATA_DIR = path.join(__dirname, "data");
 const LEGACY_VOTES_PATH = path.join(DATA_DIR, "votes.json");
 const DEFAULT_DB_PATH = path.join(DATA_DIR, "app.db");
-const MICHAEL_JACKSON_ARTIST_NAME = "Michael Jackson";
-
-const spotifyCache = {
-  token: null,
-  tokenExpiresAt: 0,
-  tracks: null,
-  tracksFetchedAt: 0,
-};
+const CATALOG_PATH = path.join(DATA_DIR, "michael-jackson-catalog.json");
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -30,6 +23,7 @@ const MIME_TYPES = {
 };
 
 let database;
+let catalogCache;
 
 function loadDotEnv() {
   const envPath = path.join(__dirname, ".env");
@@ -55,14 +49,6 @@ function loadDotEnv() {
 
 function getPort() {
   return Number(process.env.PORT || 3000);
-}
-
-function getSpotifyClientId() {
-  return process.env.SPOTIFY_CLIENT_ID || "";
-}
-
-function getSpotifyClientSecret() {
-  return process.env.SPOTIFY_CLIENT_SECRET || "";
 }
 
 function getDatabasePath() {
@@ -213,6 +199,18 @@ async function initializeDatabase() {
   database = db;
 }
 
+async function loadCatalog() {
+  if (catalogCache) {
+    return catalogCache;
+  }
+
+  const content = await fs.readFile(CATALOG_PATH, "utf8");
+  const parsed = JSON.parse(content);
+  catalogCache = Array.isArray(parsed) ? parsed : [];
+
+  return catalogCache;
+}
+
 function getVoteById(voteId) {
   const db = getDb();
   const voteRow = db.prepare(`
@@ -280,178 +278,12 @@ function getLeaderboard() {
   };
 }
 
-function canonicalizeTrackName(name) {
-  return name
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\(([^)]*(remaster|edit|mix|version|live|demo)[^)]*)\)/gi, "")
-    .replace(/\[([^\]]*(remaster|edit|mix|version|live|demo)[^\]]*)\]/gi, "")
-    .replace(/\s-\s(20\d{2}\s)?(remaster(ed)?|edit|mix|version|live|demo).*$/gi, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .toLowerCase();
-}
-
 function scoreVote(rankedTracks) {
   return rankedTracks.map((track, index) => ({
     ...track,
     rank: index + 1,
     bordaPoints: 15 - index,
   }));
-}
-
-async function getSpotifyToken() {
-  const clientId = getSpotifyClientId();
-  const clientSecret = getSpotifyClientSecret();
-
-  if (!clientId || !clientSecret) {
-    throw new Error("Spotify credentials are missing.");
-  }
-
-  if (spotifyCache.token && Date.now() < spotifyCache.tokenExpiresAt - 60_000) {
-    return spotifyCache.token;
-  }
-
-  const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
-  const response = await fetch("https://accounts.spotify.com/api/token", {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${credentials}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({ grant_type: "client_credentials" }),
-  });
-
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(`Spotify token error: ${response.status} ${message}`);
-  }
-
-  const payload = await response.json();
-  spotifyCache.token = payload.access_token;
-  spotifyCache.tokenExpiresAt = Date.now() + payload.expires_in * 1000;
-  return spotifyCache.token;
-}
-
-async function spotifyGet(url) {
-  const token = await getSpotifyToken();
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(`Spotify API error: ${response.status} ${message}`);
-  }
-
-  return response.json();
-}
-
-async function getMichaelJacksonArtistId() {
-  const query = encodeURIComponent(`artist:${MICHAEL_JACKSON_ARTIST_NAME}`);
-  const payload = await spotifyGet(`https://api.spotify.com/v1/search?q=${query}&type=artist&limit=10`);
-  const items = payload.artists?.items || [];
-  const exactMatch = items.find((artist) => artist.name.toLowerCase() === MICHAEL_JACKSON_ARTIST_NAME.toLowerCase());
-
-  if (!exactMatch) {
-    throw new Error("Michael Jackson artist not found on Spotify.");
-  }
-
-  return exactMatch.id;
-}
-
-async function getAllArtistAlbums(artistId) {
-  const allAlbums = [];
-  let nextUrl = `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album,single,compilation&market=FR&limit=50`;
-
-  while (nextUrl) {
-    const page = await spotifyGet(nextUrl);
-    allAlbums.push(...(page.items || []));
-    nextUrl = page.next;
-  }
-
-  const seen = new Set();
-  return allAlbums.filter((album) => {
-    if (seen.has(album.id)) return false;
-    seen.add(album.id);
-    return true;
-  });
-}
-
-async function getAlbumTracks(albumId) {
-  const tracks = [];
-  let nextUrl = `https://api.spotify.com/v1/albums/${albumId}/tracks?market=FR&limit=50`;
-
-  while (nextUrl) {
-    const page = await spotifyGet(nextUrl);
-    tracks.push(...(page.items || []));
-    nextUrl = page.next;
-  }
-
-  return tracks;
-}
-
-function pickBestImage(images) {
-  return images?.[0]?.url || images?.[1]?.url || null;
-}
-
-async function fetchMichaelJacksonTracks() {
-  const oneHour = 60 * 60 * 1000;
-  if (spotifyCache.tracks && Date.now() - spotifyCache.tracksFetchedAt < oneHour) {
-    return spotifyCache.tracks;
-  }
-
-  const artistId = await getMichaelJacksonArtistId();
-  const albums = await getAllArtistAlbums(artistId);
-  const dedupedTracks = new Map();
-
-  for (const album of albums) {
-    const albumTracks = await getAlbumTracks(album.id);
-
-    for (const track of albumTracks) {
-      const artistNames = (track.artists || []).map((artist) => artist.name);
-      if (!artistNames.some((name) => name.toLowerCase() === MICHAEL_JACKSON_ARTIST_NAME.toLowerCase())) {
-        continue;
-      }
-
-      const canonicalName = canonicalizeTrackName(track.name);
-      const popularityHint = album.release_date ? Number(album.release_date.slice(0, 4)) : 0;
-      const candidate = {
-        id: track.id,
-        name: track.name,
-        canonicalName,
-        artist: artistNames.join(", "),
-        album: album.name,
-        image: pickBestImage(album.images),
-        spotifyUrl: `https://open.spotify.com/track/${track.id}`,
-        previewUrl: track.preview_url || null,
-        releaseDate: album.release_date || null,
-        popularityHint,
-      };
-
-      const current = dedupedTracks.get(canonicalName);
-      if (!current) {
-        dedupedTracks.set(canonicalName, candidate);
-        continue;
-      }
-
-      const currentScore = Number(Boolean(current.previewUrl)) + current.popularityHint;
-      const candidateScore = Number(Boolean(candidate.previewUrl)) + candidate.popularityHint;
-      if (candidateScore > currentScore) {
-        dedupedTracks.set(canonicalName, candidate);
-      }
-    }
-  }
-
-  const tracks = [...dedupedTracks.values()]
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map(({ canonicalName, popularityHint, ...track }) => track);
-
-  spotifyCache.tracks = tracks;
-  spotifyCache.tracksFetchedAt = Date.now();
-  return tracks;
 }
 
 async function parseBody(req) {
@@ -475,7 +307,7 @@ function validateRankedTracks(rankedTracks) {
     }
 
     if (ids.has(track.id)) {
-      return "Le Top 15 ne peut pas contenir deux fois la même chanson.";
+      return "Le Top 15 ne peut pas contenir deux fois la meme chanson.";
     }
 
     ids.add(track.id);
@@ -487,15 +319,16 @@ function validateRankedTracks(rankedTracks) {
 async function handleApi(req, res, pathname) {
   if (req.method === "GET" && pathname === "/api/tracks") {
     try {
-      const tracks = await fetchMichaelJacksonTracks();
+      const tracks = await loadCatalog();
       return json(res, 200, {
         tracks,
         total: tracks.length,
-        source: "spotify",
+        source: "local",
+        scope: "Official solo Michael Jackson songs from core album releases, deduplicated and excluding remixes.",
       });
     } catch (error) {
       return json(res, 500, {
-        error: "Impossible de recuperer les chansons Spotify.",
+        error: "Impossible de recuperer le catalogue local.",
         detail: error.message,
       });
     }
@@ -506,10 +339,13 @@ async function handleApi(req, res, pathname) {
   }
 
   if (req.method === "GET" && pathname === "/api/health") {
+    const tracks = await loadCatalog();
     return json(res, 200, {
       status: "ok",
       databasePath: getDatabasePath(),
       totalVotes: getLeaderboard().totalVotes,
+      catalogSource: "local",
+      catalogSize: tracks.length,
     });
   }
 
@@ -584,6 +420,7 @@ const server = http.createServer(async (req, res) => {
 
 loadDotEnv()
   .then(() => initializeDatabase())
+  .then(() => loadCatalog())
   .then(() => {
     server.listen(getPort(), () => {
       console.log(`Michael Jackson Top 15 app running on http://localhost:${getPort()}`);

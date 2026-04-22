@@ -5,6 +5,7 @@ WORKDIR /app
 COPY package.json ./
 COPY server.js ./
 COPY public ./public
+COPY data/michael-jackson-catalog.json ./data/michael-jackson-catalog.json
 
 RUN mkdir -p /app/data /data
 

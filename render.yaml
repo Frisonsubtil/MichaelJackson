@@ -9,10 +9,6 @@ services:
         value: 3000
       - key: DB_PATH
         value: /data/app.db
-      - key: SPOTIFY_CLIENT_ID
-        sync: false
-      - key: SPOTIFY_CLIENT_SECRET
-        sync: false
     disk:
       name: mj-top15-data
       mountPath: /data

@@ -2,7 +2,7 @@
 
 Application web pour classer les 15 meilleures chansons de Michael Jackson, avec:
 
-- catalogue Spotify des morceaux de Michael Jackson
+- catalogue local de chansons de Michael Jackson
 - interface glisser-deposer pour composer un Top 15
 - enregistrement des votes dans une vraie base SQLite
 - calcul d'un classement consolide via decompte de Borda
@@ -10,17 +10,13 @@ Application web pour classer les 15 meilleures chansons de Michael Jackson, avec
 ## Prerequis
 
 - Node.js 24+
-- des identifiants Spotify Web API
 
-## Configuration Spotify
+## Configuration
 
-1. Creez une application sur le tableau de bord Spotify for Developers.
-2. Recopiez `.env.example` vers `.env`.
-3. Renseignez:
+Recopiez `.env.example` vers `.env` si vous voulez personnaliser:
 
-- `SPOTIFY_CLIENT_ID`
-- `SPOTIFY_CLIENT_SECRET`
-- `DB_PATH` si vous voulez un chemin different pour la base
+- `PORT`
+- `DB_PATH`
 
 ## Lancement
 
@@ -39,6 +35,19 @@ Les votes sont stockes dans une base SQLite:
 - locale par defaut: `data/app.db`
 - configurable via `DB_PATH`
 - migration automatique depuis `data/votes.json` si ce fichier existe encore
+
+## Catalogue local
+
+Le catalogue embarque [data/michael-jackson-catalog.json](/Users/jhaddad/Documents/Codex/2026-04-22-je-veux-cr-er-un-site/data/michael-jackson-catalog.json) avec 133 titres.
+
+Portee actuelle:
+
+- chansons officiellement publiees sous le nom de Michael Jackson
+- albums studio et grands albums originaux majeurs
+- titres dedupliques
+- remixes exclus
+
+Si besoin, on peut etendre ensuite le catalogue aux raretes, demos, faces B et titres hors album.
 
 ## Methode Borda
 
@@ -63,7 +72,6 @@ Configuration Render recommandee:
 - runtime Docker
 - disque persistant monte sur `/data`
 - `DB_PATH=/data/app.db`
-- variables `SPOTIFY_CLIENT_ID` et `SPOTIFY_CLIENT_SECRET`
 
 L'endpoint de sante est `/api/health`.
 
@@ -84,6 +92,5 @@ Puis dans Render:
 
 1. Creez un nouveau `Web Service` depuis votre repo GitHub.
 2. Laissez Render detecter [render.yaml](/Users/jhaddad/Documents/Codex/2026-04-22-je-veux-cr-er-un-site/render.yaml).
-3. Renseignez `SPOTIFY_CLIENT_ID` et `SPOTIFY_CLIENT_SECRET`.
-4. Verifiez qu'un disque persistant est monte sur `/data`.
-5. Deployez puis ouvrez `/api/health` pour verifier que tout est vert.
+3. Verifiez qu'un disque persistant est monte sur `/data`.
+4. Deployez puis ouvrez `/api/health` pour verifier que tout est vert.

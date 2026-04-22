@@ -5,6 +5,20 @@ const state = {
   draggingTrackId: null,
 };
 
+const COVER_PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#f0d6c9" />
+        <stop offset="100%" stop-color="#d8b39e" />
+      </linearGradient>
+    </defs>
+    <rect width="120" height="120" rx="24" fill="url(#g)" />
+    <circle cx="60" cy="60" r="26" fill="#fff7f1" opacity="0.8" />
+    <circle cx="60" cy="60" r="9" fill="#8b4a31" />
+  </svg>
+`);
+
 const catalogList = document.querySelector("#catalog-list");
 const rankingList = document.querySelector("#ranking-list");
 const leaderboardList = document.querySelector("#leaderboard-list");
@@ -17,7 +31,7 @@ const submitVoteButton = document.querySelector("#submit-vote");
 const catalogTemplate = document.querySelector("#catalog-item-template");
 
 function formatTrackMeta(track) {
-  return `${track.artist} • ${track.album}`;
+  return `${track.artist} • ${track.album} • ${track.year}`;
 }
 
 function getTrackById(trackId) {
@@ -69,14 +83,14 @@ function renderCatalog() {
     const image = fragment.querySelector(".track-cover");
     const title = fragment.querySelector(".track-title");
     const meta = fragment.querySelector(".track-meta");
-    const link = fragment.querySelector(".track-link");
+    const tag = fragment.querySelector(".track-tag");
 
     card.dataset.trackId = track.id;
-    image.src = track.image || "";
+    image.src = track.image || COVER_PLACEHOLDER;
     image.alt = `Pochette de ${track.name}`;
     title.textContent = track.name;
     meta.textContent = formatTrackMeta(track);
-    link.href = track.spotifyUrl;
+    tag.textContent = track.year ? String(track.year) : "Catalogue";
 
     card.addEventListener("dragstart", () => {
       state.draggingTrackId = track.id;
@@ -231,9 +245,9 @@ function renderLeaderboard(data) {
     title.className = "leaderboard-title";
     title.textContent = entry.name;
 
-    const meta = document.createElement("span");
-    meta.className = "leaderboard-meta";
-    meta.textContent = `${entry.artist} • ${entry.appearances} votes • rang moyen ${entry.averageRank}`;
+      const meta = document.createElement("span");
+      meta.className = "leaderboard-meta";
+      meta.textContent = `${entry.artist} • ${entry.album} • ${entry.appearances} votes • rang moyen ${entry.averageRank}`;
 
     copy.append(title, meta);
 
@@ -247,7 +261,7 @@ function renderLeaderboard(data) {
 }
 
 async function loadTracks() {
-  setCatalogStatus("Chargement du catalogue Spotify...");
+  setCatalogStatus("Chargement du catalogue local...");
 
   try {
     const response = await fetch("/api/tracks");
@@ -260,10 +274,10 @@ async function loadTracks() {
     state.tracks = payload.tracks || [];
     state.filteredTracks = [...state.tracks];
     totalTracks.textContent = String(payload.total || state.tracks.length);
-    setCatalogStatus(`${state.tracks.length} chansons chargees depuis Spotify.`);
+    setCatalogStatus(`${state.tracks.length} chansons chargees depuis le catalogue local.`);
     renderCatalog();
   } catch (error) {
-    setCatalogStatus(`Erreur Spotify: ${error.message}`, true);
+    setCatalogStatus(`Erreur catalogue: ${error.message}`, true);
   }
 }
 

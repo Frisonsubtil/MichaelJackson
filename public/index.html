@@ -23,7 +23,7 @@
             <strong id="total-votes">0</strong>
           </div>
           <div class="stat-card">
-            <span class="stat-label">Titres Spotify charges</span>
+            <span class="stat-label">Titres du catalogue</span>
             <strong id="total-tracks">0</strong>
           </div>
         </div>
@@ -33,18 +33,21 @@
         <section class="panel catalog-panel">
           <div class="panel-head">
             <div>
-              <p class="section-kicker">Catalogue Spotify</p>
+              <p class="section-kicker">Catalogue local</p>
               <h2>Toutes les chansons</h2>
             </div>
             <button id="reload-tracks" class="secondary-button" type="button">Recharger</button>
           </div>
 
           <label class="search-box">
-            <span>Rechercher un titre</span>
+            <span>Filtrer la liste (optionnel)</span>
             <input id="track-search" type="search" placeholder="Ex. Billie Jean" autocomplete="off" />
           </label>
 
-          <p id="catalog-status" class="status-line">Chargement du catalogue Spotify...</p>
+          <p class="help-text">
+            Toute la liste apparait directement ci-dessous. Le champ de recherche sert seulement de filtre rapide.
+          </p>
+          <p id="catalog-status" class="status-line">Chargement du catalogue local...</p>
           <div id="catalog-list" class="catalog-list" aria-live="polite"></div>
         </section>
 
@@ -94,7 +97,7 @@
           <strong class="track-title"></strong>
           <span class="track-meta"></span>
         </div>
-        <a class="track-link" target="_blank" rel="noreferrer">Spotify</a>
+        <span class="track-tag"></span>
       </article>
     </template>
 
