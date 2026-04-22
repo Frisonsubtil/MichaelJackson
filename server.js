@@ -422,8 +422,9 @@ loadDotEnv()
   .then(() => initializeDatabase())
   .then(() => loadCatalog())
   .then(() => {
-    server.listen(getPort(), () => {
-      console.log(`Michael Jackson Top 15 app running on http://localhost:${getPort()}`);
+    const port = getPort();
+    server.listen(port, "0.0.0.0", () => {
+      console.log(`Michael Jackson Top 15 app running on http://0.0.0.0:${port}`);
     });
   })
   .catch((error) => {
