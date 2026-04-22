@@ -1,0 +1,19 @@
+{
+  "rankedTracks": [
+    { "id": "1", "name": "Billie Jean", "artist": "Michael Jackson", "album": "Thriller", "image": null, "spotifyUrl": "https://open.spotify.com/track/1" },
+    { "id": "2", "name": "Beat It", "artist": "Michael Jackson", "album": "Thriller", "image": null, "spotifyUrl": "https://open.spotify.com/track/2" },
+    { "id": "3", "name": "Thriller", "artist": "Michael Jackson", "album": "Thriller", "image": null, "spotifyUrl": "https://open.spotify.com/track/3" },
+    { "id": "4", "name": "Smooth Criminal", "artist": "Michael Jackson", "album": "Bad", "image": null, "spotifyUrl": "https://open.spotify.com/track/4" },
+    { "id": "5", "name": "Black or White", "artist": "Michael Jackson", "album": "Dangerous", "image": null, "spotifyUrl": "https://open.spotify.com/track/5" },
+    { "id": "6", "name": "Bad", "artist": "Michael Jackson", "album": "Bad", "image": null, "spotifyUrl": "https://open.spotify.com/track/6" },
+    { "id": "7", "name": "Remember the Time", "artist": "Michael Jackson", "album": "Dangerous", "image": null, "spotifyUrl": "https://open.spotify.com/track/7" },
+    { "id": "8", "name": "Human Nature", "artist": "Michael Jackson", "album": "Thriller", "image": null, "spotifyUrl": "https://open.spotify.com/track/8" },
+    { "id": "9", "name": "Dirty Diana", "artist": "Michael Jackson", "album": "Bad", "image": null, "spotifyUrl": "https://open.spotify.com/track/9" },
+    { "id": "10", "name": "Rock With You", "artist": "Michael Jackson", "album": "Off the Wall", "image": null, "spotifyUrl": "https://open.spotify.com/track/10" },
+    { "id": "11", "name": "The Way You Make Me Feel", "artist": "Michael Jackson", "album": "Bad", "image": null, "spotifyUrl": "https://open.spotify.com/track/11" },
+    { "id": "12", "name": "Man in the Mirror", "artist": "Michael Jackson", "album": "Bad", "image": null, "spotifyUrl": "https://open.spotify.com/track/12" },
+    { "id": "13", "name": "Don't Stop 'Til You Get Enough", "artist": "Michael Jackson", "album": "Off the Wall", "image": null, "spotifyUrl": "https://open.spotify.com/track/13" },
+    { "id": "14", "name": "Wanna Be Startin' Somethin'", "artist": "Michael Jackson", "album": "Thriller", "image": null, "spotifyUrl": "https://open.spotify.com/track/14" },
+    { "id": "15", "name": "P.Y.T.", "artist": "Michael Jackson", "album": "Thriller", "image": null, "spotifyUrl": "https://open.spotify.com/track/15" }
+  ]
+}

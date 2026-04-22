@@ -1,0 +1,14 @@
+{
+  "name": "michael-jackson-top-15",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Application de classement collaboratif des chansons de Michael Jackson avec Spotify et decompte de Borda.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "check": "node --check server.js && node --check public/app.js"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}

@@ -1,0 +1,6 @@
+.env
+data/app.db
+data/app.db-shm
+data/app.db-wal
+data/votes.json
+.DS_Store

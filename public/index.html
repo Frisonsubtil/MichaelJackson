@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Michael Jackson Top 15</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Classement collaboratif</p>
+          <h1>Construisez le Top 15 ultime de Michael Jackson</h1>
+          <p class="hero-copy">
+            Faites glisser vos chansons favorites dans votre Top 15, attribuez un rang de 1 a 15,
+            puis comparez votre selection au classement consolide en decompte de Borda.
+          </p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <span class="stat-label">Votes enregistres</span>
+            <strong id="total-votes">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Titres Spotify charges</span>
+            <strong id="total-tracks">0</strong>
+          </div>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel catalog-panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-kicker">Catalogue Spotify</p>
+              <h2>Toutes les chansons</h2>
+            </div>
+            <button id="reload-tracks" class="secondary-button" type="button">Recharger</button>
+          </div>
+
+          <label class="search-box">
+            <span>Rechercher un titre</span>
+            <input id="track-search" type="search" placeholder="Ex. Billie Jean" autocomplete="off" />
+          </label>
+
+          <p id="catalog-status" class="status-line">Chargement du catalogue Spotify...</p>
+          <div id="catalog-list" class="catalog-list" aria-live="polite"></div>
+        </section>
+
+        <section class="panel ranking-panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-kicker">Votre vote</p>
+              <h2>Top 15 par glisser-deposer</h2>
+            </div>
+            <button id="clear-ranking" class="secondary-button" type="button">Vider</button>
+          </div>
+
+          <p class="help-text">
+            Glissez un morceau depuis le catalogue vers une position du Top 15. Vous pouvez aussi
+            reordonner votre liste en deplacant un titre deja selectionne.
+          </p>
+
+          <div id="ranking-list" class="ranking-list" aria-label="Top 15"></div>
+
+          <div class="actions">
+            <button id="submit-vote" class="primary-button" type="button">Envoyer mon Top 15</button>
+            <p id="vote-status" class="status-line"></p>
+          </div>
+        </section>
+
+        <section class="panel leaderboard-panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-kicker">Resultats agreges</p>
+              <h2>Classement Borda</h2>
+            </div>
+          </div>
+
+          <p class="help-text">
+            Barème Borda: 15 points pour le rang 1, puis 14, 13 ... jusqu'a 1 point pour le rang 15.
+          </p>
+
+          <div id="leaderboard-list" class="leaderboard-list" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
+
+    <template id="catalog-item-template">
+      <article class="track-card" draggable="true">
+        <img class="track-cover" alt="" />
+        <div class="track-copy">
+          <strong class="track-title"></strong>
+          <span class="track-meta"></span>
+        </div>
+        <a class="track-link" target="_blank" rel="noreferrer">Spotify</a>
+      </article>
+    </template>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>
