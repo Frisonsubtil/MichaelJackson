@@ -257,6 +257,37 @@ h2 {
   white-space: nowrap;
 }
 
+.catalog-actions {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.add-button,
+.icon-button {
+  border: 0;
+  border-radius: 999px;
+  background: rgba(212, 76, 36, 0.12);
+  color: var(--accent-dark);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.add-button {
+  padding: 10px 14px;
+}
+
+.icon-button {
+  width: 36px;
+  height: 36px;
+}
+
+.icon-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 .ranking-slot {
   padding: 10px 12px;
   min-height: 80px;
@@ -283,6 +314,8 @@ h2 {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .ghost-button {
@@ -338,5 +371,32 @@ h2 {
 
   .panel-head {
     flex-direction: column;
+  }
+
+  .track-card,
+  .ranking-slot,
+  .leaderboard-row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .catalog-actions,
+  .slot-actions {
+    grid-column: 1 / -1;
+    justify-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .catalog-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .add-button {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .icon-button,
+  .ghost-button {
+    min-height: 40px;
   }
 }

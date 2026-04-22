@@ -46,6 +46,7 @@
 
           <p class="help-text">
             Toute la liste apparait directement ci-dessous. Le champ de recherche sert seulement de filtre rapide.
+            Sur mobile, utilisez "Ajouter" puis reajustez l'ordre avec les fleches du Top 15.
           </p>
           <p id="catalog-status" class="status-line">Chargement du catalogue local...</p>
           <div id="catalog-list" class="catalog-list" aria-live="polite"></div>
@@ -61,8 +62,8 @@
           </div>
 
           <p class="help-text">
-            Glissez un morceau depuis le catalogue vers une position du Top 15. Vous pouvez aussi
-            reordonner votre liste en deplacant un titre deja selectionne.
+            Sur ordinateur, vous pouvez glisser-deposer. Sur mobile, ajoutez un titre puis utilisez
+            les boutons pour le monter, le descendre ou le retirer.
           </p>
 
           <div id="ranking-list" class="ranking-list" aria-label="Top 15"></div>
@@ -97,7 +98,10 @@
           <strong class="track-title"></strong>
           <span class="track-meta"></span>
         </div>
-        <span class="track-tag"></span>
+        <div class="catalog-actions">
+          <span class="track-tag"></span>
+          <button class="add-button" type="button">Ajouter</button>
+        </div>
       </article>
     </template>
 

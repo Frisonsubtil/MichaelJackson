@@ -38,6 +38,10 @@ function getTrackById(trackId) {
   return state.tracks.find((track) => track.id === trackId) || null;
 }
 
+function getFirstEmptyIndex() {
+  return state.ranking.findIndex((slot) => slot === null);
+}
+
 function setCatalogStatus(message, isError = false) {
   catalogStatus.textContent = message;
   catalogStatus.style.color = isError ? "#9e3114" : "";
@@ -84,6 +88,7 @@ function renderCatalog() {
     const title = fragment.querySelector(".track-title");
     const meta = fragment.querySelector(".track-meta");
     const tag = fragment.querySelector(".track-tag");
+    const addButton = fragment.querySelector(".add-button");
 
     card.dataset.trackId = track.id;
     image.src = track.image || COVER_PLACEHOLDER;
@@ -103,14 +108,29 @@ function renderCatalog() {
     });
 
     card.addEventListener("dblclick", () => {
-      const firstEmptyIndex = state.ranking.findIndex((slot) => slot === null);
+      const firstEmptyIndex = getFirstEmptyIndex();
       if (firstEmptyIndex >= 0) {
         placeTrack(track.id, firstEmptyIndex);
       }
     });
 
+    addButton.addEventListener("click", () => {
+      addTrackToRanking(track.id);
+    });
+
     catalogList.append(fragment);
   }
+}
+
+function addTrackToRanking(trackId) {
+  const firstEmptyIndex = getFirstEmptyIndex();
+  if (firstEmptyIndex < 0) {
+    setVoteStatus("Votre Top 15 est deja complet. Reordonnez-le ou retirez un titre.", true);
+    return;
+  }
+
+  setVoteStatus("");
+  placeTrack(trackId, firstEmptyIndex);
 }
 
 function placeTrack(trackId, targetIndex) {
@@ -143,6 +163,19 @@ function removeTrackFromRanking(index) {
   renderCatalog();
 }
 
+function moveTrack(index, direction) {
+  const targetIndex = index + direction;
+  if (targetIndex < 0 || targetIndex >= state.ranking.length) {
+    return;
+  }
+
+  const currentTrack = state.ranking[index];
+  state.ranking[index] = state.ranking[targetIndex];
+  state.ranking[targetIndex] = currentTrack;
+
+  renderRanking();
+}
+
 function renderRanking() {
   rankingList.innerHTML = "";
 
@@ -171,7 +204,7 @@ function renderRanking() {
     } else {
       const empty = document.createElement("span");
       empty.className = "slot-empty";
-      empty.textContent = "Deposez une chanson ici";
+      empty.textContent = "Deposez une chanson ici ou ajoutez-la depuis la liste";
       copy.append(empty);
     }
 
@@ -179,12 +212,28 @@ function renderRanking() {
     actions.className = "slot-actions";
 
     if (track) {
+      const upButton = document.createElement("button");
+      upButton.type = "button";
+      upButton.className = "icon-button";
+      upButton.textContent = "↑";
+      upButton.disabled = index === 0;
+      upButton.setAttribute("aria-label", `Monter ${track.name}`);
+      upButton.addEventListener("click", () => moveTrack(index, -1));
+
+      const downButton = document.createElement("button");
+      downButton.type = "button";
+      downButton.className = "icon-button";
+      downButton.textContent = "↓";
+      downButton.disabled = index === state.ranking.length - 1;
+      downButton.setAttribute("aria-label", `Descendre ${track.name}`);
+      downButton.addEventListener("click", () => moveTrack(index, 1));
+
       const removeButton = document.createElement("button");
       removeButton.type = "button";
       removeButton.className = "ghost-button";
       removeButton.textContent = "Retirer";
       removeButton.addEventListener("click", () => removeTrackFromRanking(index));
-      actions.append(removeButton);
+      actions.append(upButton, downButton, removeButton);
 
       slot.draggable = true;
       slot.addEventListener("dragstart", () => {
