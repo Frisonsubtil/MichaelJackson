@@ -126,6 +126,23 @@ h2 {
   gap: 14px;
 }
 
+.moonwalk-card {
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1px solid rgba(241, 210, 123, 0.16);
+  background:
+    radial-gradient(circle at top center, rgba(241, 210, 123, 0.14), transparent 46%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 55%),
+    rgba(12, 12, 17, 0.92);
+  box-shadow: var(--shadow);
+}
+
+.moonwalk-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .stat-card,
 .panel {
   background: var(--panel);

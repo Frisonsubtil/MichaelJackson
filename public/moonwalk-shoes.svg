@@ -1,0 +1,43 @@
+<svg width="320" height="180" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="22" y1="18" x2="292" y2="156" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1A1B22"/>
+      <stop offset="1" stop-color="#0B0B10"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="70" y1="48" x2="250" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F1D27B"/>
+      <stop offset="0.5" stop-color="#B7892E"/>
+      <stop offset="1" stop-color="#6E4A14"/>
+    </linearGradient>
+    <linearGradient id="red" x1="112" y1="74" x2="244" y2="142" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B51F45"/>
+      <stop offset="1" stop-color="#601022"/>
+    </linearGradient>
+    <filter id="glow" x="0" y="0" width="320" height="180" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="12" y="12" width="296" height="156" rx="28" fill="url(#bg)" stroke="rgba(241,210,123,0.18)"/>
+  <ellipse cx="160" cy="42" rx="68" ry="18" fill="#F7F2E2" fill-opacity="0.14" filter="url(#glow)"/>
+  <ellipse cx="160" cy="134" rx="112" ry="18" fill="#000000" fill-opacity="0.34"/>
+  <path d="M54 142C96 130 117 124 138 124C149 124 160 126 170 130L184 136C187 137 188 141 186 144C184 147 180 149 175 149H63C54 149 49 146 54 142Z" fill="url(#gold)"/>
+  <path d="M92 89L146 89C156 89 163 96 163 106V124H121C111 124 101 121 92 116L77 108C72 105 70 99 72 95C75 91 83 89 92 89Z" fill="#F6EAD1"/>
+  <path d="M92 89L146 89C156 89 163 96 163 106V111H83C78 111 74 109 72 105C70 101 71 96 74 93C78 90 84 89 92 89Z" fill="url(#red)"/>
+  <rect x="105" y="84" width="12" height="40" rx="6" transform="rotate(-22 105 84)" fill="#EBD2A8"/>
+  <rect x="119" y="81" width="12" height="44" rx="6" transform="rotate(-22 119 81)" fill="#EBD2A8"/>
+  <rect x="133" y="78" width="12" height="44" rx="6" transform="rotate(-22 133 78)" fill="#EBD2A8"/>
+
+  <path d="M150 134C200 123 224 118 247 118C257 118 267 120 277 123L262 132C250 139 236 143 222 143H156C149 143 145 140 150 134Z" fill="url(#gold)"/>
+  <path d="M189 73L244 73C253 73 261 80 263 90L268 118H222C211 118 201 114 192 107L177 96C173 93 171 88 173 83C176 77 182 73 189 73Z" fill="#F6EAD1"/>
+  <path d="M189 73L244 73C253 73 261 80 263 90L264 95H186C180 95 175 93 173 89C171 85 172 81 175 77C178 75 183 73 189 73Z" fill="#14151B"/>
+  <rect x="204" y="68" width="12" height="42" rx="6" transform="rotate(16 204 68)" fill="#EBD2A8"/>
+  <rect x="219" y="71" width="12" height="43" rx="6" transform="rotate(16 219 71)" fill="#EBD2A8"/>
+  <rect x="234" y="75" width="12" height="42" rx="6" transform="rotate(16 234 75)" fill="#EBD2A8"/>
+
+  <path d="M54 147H265" stroke="#F1D27B" stroke-opacity="0.18" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 10"/>
+</svg>

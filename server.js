@@ -268,6 +268,7 @@ async function createSqliteStorage() {
     },
     async getLeaderboard() {
       const totalVotesRow = db.prepare("SELECT COUNT(*) AS totalVotes FROM votes").get();
+      const totalVotes = Number(totalVotesRow.totalVotes || 0);
       const ranking = db.prepare(`
         SELECT
           track_id AS id,
@@ -280,14 +281,19 @@ async function createSqliteStorage() {
           COUNT(*) AS appearances,
           SUM(rank) AS rankSum,
           SUM(CASE WHEN rank = 1 THEN 1 ELSE 0 END) AS firstPlaceVotes,
-          ROUND(AVG(rank), 2) AS averageRank
+          ROUND(
+            (
+              SUM(rank) + ((? - COUNT(*)) * 16.0)
+            ) / ?,
+            2
+          ) AS averageRank
         FROM vote_tracks
         GROUP BY track_id, name, artist, album, image, spotify_url
         ORDER BY totalPoints DESC, firstPlaceVotes DESC, appearances DESC, name ASC
-      `).all();
+      `).all(totalVotes, totalVotes);
 
       return {
-        totalVotes: Number(totalVotesRow.totalVotes || 0),
+        totalVotes,
         ranking: ranking.map((row) => ({
           ...row,
           totalPoints: Number(row.totalPoints),
@@ -490,6 +496,7 @@ async function createPostgresStorage() {
     },
     async getLeaderboard() {
       const totalVotesResult = await query("SELECT COUNT(*)::int AS total FROM votes;");
+      const totalVotes = Number(totalVotesResult.rows[0]?.total || 0);
       const rankingResult = await query(`
         SELECT
           track_id AS id,
@@ -502,14 +509,19 @@ async function createPostgresStorage() {
           COUNT(*)::int AS appearances,
           SUM(rank)::int AS "rankSum",
           SUM(CASE WHEN rank = 1 THEN 1 ELSE 0 END)::int AS "firstPlaceVotes",
-          ROUND(AVG(rank)::numeric, 2) AS "averageRank"
+          ROUND(
+            (
+              SUM(rank) + (($1 - COUNT(*)) * 16.0)
+            ) / $1,
+            2
+          ) AS "averageRank"
         FROM vote_tracks
         GROUP BY track_id, name, artist, album, image, spotify_url
         ORDER BY "totalPoints" DESC, "firstPlaceVotes" DESC, appearances DESC, name ASC
-      `);
+      `, [totalVotes]);
 
       return {
-        totalVotes: Number(totalVotesResult.rows[0]?.total || 0),
+        totalVotes,
         ranking: rankingResult.rows.map((row) => ({
           ...row,
           totalPoints: Number(row.totalPoints),
