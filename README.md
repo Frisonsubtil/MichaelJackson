@@ -3,8 +3,8 @@
 Application web pour classer les 15 meilleures chansons de Michael Jackson, avec:
 
 - catalogue local de chansons de Michael Jackson
-- interface glisser-deposer pour composer un Top 15
-- enregistrement des votes dans une vraie base SQLite
+- interface glisser-deposer sur desktop et edition fluide sur mobile
+- enregistrement des votes dans Postgres sur Render
 - calcul d'un classement consolide via decompte de Borda
 
 ## Prerequis
@@ -17,6 +17,7 @@ Recopiez `.env.example` vers `.env` si vous voulez personnaliser:
 
 - `PORT`
 - `DB_PATH`
+- `DATABASE_URL`
 
 ## Lancement
 
@@ -30,11 +31,16 @@ Ouvrez ensuite [http://localhost:3000](http://localhost:3000).
 
 ## Base de donnees
 
-Les votes sont stockes dans une base SQLite:
+Le projet utilise:
 
-- locale par defaut: `data/app.db`
-- configurable via `DB_PATH`
-- migration automatique depuis `data/votes.json` si ce fichier existe encore
+- Postgres si `DATABASE_URL` est renseigne
+- SQLite locale sinon, pour le developpement local
+
+Comportement:
+
+- en local sans Postgres: `data/app.db`
+- en production Render recommande: `DATABASE_URL`
+- migration automatique depuis `data/votes.json` si ce fichier existe encore et si la base cible est vide
 
 ## Catalogue local
 
@@ -70,8 +76,7 @@ Le projet contient:
 Configuration Render recommandee:
 
 - runtime Docker
-- disque persistant monte sur `/data`
-- `DB_PATH=/data/app.db`
+- variable `DATABASE_URL` pointant vers votre base Render Postgres
 
 L'endpoint de sante est `/api/health`.
 
@@ -92,5 +97,6 @@ Puis dans Render:
 
 1. Creez un nouveau `Web Service` depuis votre repo GitHub.
 2. Laissez Render detecter [render.yaml](/Users/jhaddad/Documents/Codex/2026-04-22-je-veux-cr-er-un-site/render.yaml).
-3. Verifiez qu'un disque persistant est monte sur `/data`.
-4. Deployez puis ouvrez `/api/health` pour verifier que tout est vert.
+3. Creez une base Render Postgres dans la meme region que le web service.
+4. Recopiez son URL interne dans `DATABASE_URL`.
+5. Deployez puis ouvrez `/api/health` pour verifier que `storage` vaut `postgres`.

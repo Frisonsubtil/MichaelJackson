@@ -3,6 +3,8 @@ FROM node:24-bookworm-slim
 WORKDIR /app
 
 COPY package.json ./
+RUN npm install --omit=dev
+
 COPY server.js ./
 COPY public ./public
 COPY data/michael-jackson-catalog.json ./data/michael-jackson-catalog.json

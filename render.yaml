@@ -7,9 +7,5 @@ services:
     envVars:
       - key: PORT
         value: 3000
-      - key: DB_PATH
-        value: /data/app.db
-    disk:
-      name: mj-top15-data
-      mountPath: /data
-      sizeGB: 1
+      - key: DATABASE_URL
+        sync: false
