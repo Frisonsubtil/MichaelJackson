@@ -127,20 +127,52 @@ h2 {
 }
 
 .moonwalk-card {
+  position: relative;
   border-radius: 26px;
   overflow: hidden;
   border: 1px solid rgba(241, 210, 123, 0.16);
   background:
-    radial-gradient(circle at top center, rgba(241, 210, 123, 0.14), transparent 46%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 55%),
+    linear-gradient(180deg, rgba(5, 5, 8, 0.22), rgba(5, 5, 8, 0.68)),
+    linear-gradient(135deg, rgba(241, 210, 123, 0.08), transparent 55%),
+    url("/mj-hero.jpg") center 24% / cover no-repeat,
     rgba(12, 12, 17, 0.92);
   box-shadow: var(--shadow);
+  min-height: 220px;
 }
 
-.moonwalk-image {
-  display: block;
-  width: 100%;
-  height: auto;
+.moonwalk-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.14), transparent 32%),
+    linear-gradient(180deg, transparent 38%, rgba(7, 7, 10, 0.62) 100%);
+  pointer-events: none;
+}
+
+.moonwalk-copy {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1;
+  display: grid;
+  gap: 4px;
+}
+
+.moonwalk-label {
+  color: rgba(241, 210, 123, 0.85);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.moonwalk-copy strong {
+  font-size: 1.18rem;
+  line-height: 1.05;
+  max-width: 14ch;
+  color: #fff7e7;
+  text-shadow: 0 3px 14px rgba(0, 0, 0, 0.42);
 }
 
 .stat-card,
